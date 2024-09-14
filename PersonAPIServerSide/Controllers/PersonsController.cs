@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
-using PersonsAPIBusinessLayer;
-using PersonsAPIDataAccessLayer;
+using PersonsAPIBusinessLayer.People;
+using PersonsAPIDataAccessLayer.People;
+using PersonsAPIBusinessLayer.Patients;
+using PersonsAPIDataAccessLayer.Patients;
+using PersonsAPIDataAccessLayer.Doctors;
+using PersonsAPIBusinessLayer.Doctors;
 
 
 namespace PersonAPIServerSide.Controllers
@@ -13,6 +17,7 @@ namespace PersonAPIServerSide.Controllers
     [ApiController]
     public class PersonsController : ControllerBase
     {
+        
 
         [HttpGet("All", Name = "GetAllPersons")]
 
@@ -20,7 +25,7 @@ namespace PersonAPIServerSide.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<PersonsDTO>> GetAllPersons()
         {
-            var PersonList = PersonsAPIBusinessLayer.Persons.GetAllPersons();
+            var PersonList = Persons.GetAllPersons();
             if (PersonList.Count == 0)
             {
                 return NotFound("No Persons Found");
@@ -29,7 +34,7 @@ namespace PersonAPIServerSide.Controllers
 
         }
 
-        [HttpGet("{id}", Name = "GetPersonByID")]
+        [HttpGet("Find/{id}", Name = "GetPersonByID")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -40,11 +45,11 @@ namespace PersonAPIServerSide.Controllers
                 return BadRequest("bad Request");
             }
 
-            PersonsAPIBusinessLayer.Persons person = PersonsAPIBusinessLayer.Persons.Find(id);
+            Persons person = Persons.Find(id);
 
             if (person == null)
             {
-                return NotFound("No Student found");
+                return NotFound("No Patient found");
             }
 
             PersonsDTO sDTO = person.SDTO;
@@ -55,11 +60,11 @@ namespace PersonAPIServerSide.Controllers
 
 
 
-        [HttpPost(Name = "AddPerson")]
+        [HttpPost("Add",Name = "AddPerson")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-        public ActionResult<PersonsDTO> AddNewPerson( PersonsDTO newPersonDTO)
+        public ActionResult<PersonsDTO> AddNewPerson(PersonsDTO newPersonDTO)
         {
             if (newPersonDTO == null || string.IsNullOrEmpty(newPersonDTO.PersonName)
                || string.IsNullOrEmpty(newPersonDTO.Gender)
@@ -69,7 +74,7 @@ namespace PersonAPIServerSide.Controllers
                 return BadRequest("Invalid Person data");
             }
 
-            PersonsAPIBusinessLayer.Persons person = new PersonsAPIBusinessLayer.Persons(new PersonsDTO(newPersonDTO.Id,
+            Persons person = new PersonsAPIBusinessLayer.People.Persons(new PersonsDTO(newPersonDTO.Id,
                 newPersonDTO.PersonName, newPersonDTO.DateOfBirth, newPersonDTO.Gender, newPersonDTO.PhoneNumber
                 , newPersonDTO.Email, newPersonDTO.Address));
 
@@ -82,20 +87,20 @@ namespace PersonAPIServerSide.Controllers
 
 
 
-        [HttpPut("{id}", Name = "UpdatePerson")]
+        [HttpPut("Update/{id}", Name = "UpdatePerson")]
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<PersonsDTO> UpdatePerson(int id,  PersonsDTO UpdatePersonDTO)
+        public ActionResult<PersonsDTO> UpdatePerson(int id, PersonsDTO UpdatePersonDTO)
         {
             if (id < 1 || UpdatePersonDTO == null || string.IsNullOrEmpty(UpdatePersonDTO.PersonName) || string.IsNullOrEmpty(UpdatePersonDTO.Gender)
                  || string.IsNullOrEmpty(UpdatePersonDTO.PhoneNumber) || string.IsNullOrEmpty(UpdatePersonDTO.Email) || string.IsNullOrEmpty(UpdatePersonDTO.Address))
             {
                 return BadRequest("Invalid Person data");
             }
-            PersonsAPIBusinessLayer.Persons persons = PersonsAPIBusinessLayer.Persons.Find(id);
+            Persons persons = Persons.Find(id);
 
 
             if (persons == null)
@@ -103,7 +108,7 @@ namespace PersonAPIServerSide.Controllers
                 return NotFound("No Persons found");
             }
 
-            persons.PersonID = UpdatePersonDTO.Id;
+            persons.PersonID = id;
             persons.PersonName = UpdatePersonDTO.PersonName;
             persons.DateOfBirth = UpdatePersonDTO.DateOfBirth;
             persons.Gender = UpdatePersonDTO.Gender;
@@ -128,7 +133,7 @@ namespace PersonAPIServerSide.Controllers
 
 
 
-        [HttpDelete("{id}", Name = "DeletePerson")]
+        [HttpDelete("Delete/{id}", Name = "DeletePerson")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -141,7 +146,7 @@ namespace PersonAPIServerSide.Controllers
                 return BadRequest("bad Request");
             }
 
-            
+
             if (!Persons.IsPersonExists(id))
             {
                 return NotFound($"Person with ID {id} not exist");
@@ -151,7 +156,7 @@ namespace PersonAPIServerSide.Controllers
                 return Conflict("Can't delete this Person because it has relations in other tables");
 
 
-            if (PersonsAPIBusinessLayer.Persons.DeletePerson(id))
+            if (Persons.DeletePerson(id))
             {
                 return Ok($"Person with ID {id} has been deleted");
             }
@@ -163,10 +168,15 @@ namespace PersonAPIServerSide.Controllers
 
         }
 
+    
 
 
 
     }
+
+
+
+
 }
 
 
