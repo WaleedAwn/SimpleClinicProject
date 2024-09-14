@@ -32,14 +32,13 @@ namespace PersonsAPIDataAccessLayer
 
     public class PersonsData
     {
-        private static string _connectionString = "Server=localhost;Database=SClinic;User Id=sa;Password=sa123456;TrustServerCertificate=True;";
 
         public static List<PersonsDTO> GetAllPersons()
         {
             var PersonsList = new List<PersonsDTO>();
 
 
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = new SqlConnection(DataAccessSettings.ConnectionString))
             {
                 using (SqlCommand cmd = new SqlCommand("SP_GetAllPersons", conn))
                 {
@@ -77,7 +76,7 @@ namespace PersonsAPIDataAccessLayer
 
         public static PersonsDTO GetPersonByID(int PersonID)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = new SqlConnection(DataAccessSettings.ConnectionString))
             {
                 using (SqlCommand cmd = new SqlCommand("SP_GetPersonByID", conn))
                 {
@@ -119,7 +118,7 @@ namespace PersonsAPIDataAccessLayer
 
         public static int AddNewPerson(PersonsDTO NewPersonDTOInfo)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new SqlConnection(DataAccessSettings.ConnectionString))
             {
                 using (var command = new SqlCommand("SP_AddNewPerson", connection))
                 {
@@ -150,7 +149,7 @@ namespace PersonsAPIDataAccessLayer
 
         public static bool UpdatePerson(PersonsDTO UpdatePersonDTOinfo)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new SqlConnection(DataAccessSettings.ConnectionString))
             {
                 using (var command = new SqlCommand("SP_UpdatePerson", connection))
                 {
@@ -182,7 +181,7 @@ namespace PersonsAPIDataAccessLayer
         public static bool DeletePerson(int PersonId)
         {
             int rowsAffected = 0;
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new SqlConnection(DataAccessSettings.ConnectionString))
             {
                 using (var command = new SqlCommand("SP_DeletePerson", connection))
                 {
@@ -209,7 +208,7 @@ namespace PersonsAPIDataAccessLayer
             int isFound = 0;
             bool isExist = false;
 
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new SqlConnection(DataAccessSettings.ConnectionString))
             {
 
                 using (SqlCommand command = new SqlCommand("SP_CheckPersonExists", connection))
@@ -238,7 +237,7 @@ namespace PersonsAPIDataAccessLayer
             bool isFound = false;
             int returnValue = 0;
 
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new SqlConnection(DataAccessSettings.ConnectionString))
             {
 
                 using (SqlCommand command = new SqlCommand("SP_CheckPersonRelations", connection))
