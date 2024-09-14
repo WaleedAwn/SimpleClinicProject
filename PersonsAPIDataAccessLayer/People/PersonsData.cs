@@ -5,19 +5,19 @@ using System.Globalization;
 using System.Reflection;
 using Microsoft.Data.SqlClient;
 using Microsoft.Identity.Client;
-namespace PersonsAPIDataAccessLayer
+namespace PersonsAPIDataAccessLayer.People
 {
     public class PersonsDTO
     {
         public PersonsDTO(int id, string personName, DateTime dateOfBirth, string gender, string PhoneNumber, string email, string address)
         {
-            this.Id = id;
-            this.PersonName = personName;
-            this.DateOfBirth = dateOfBirth;
-            this.Gender = gender;
+            Id = id;
+            PersonName = personName;
+            DateOfBirth = dateOfBirth;
+            Gender = gender;
             this.PhoneNumber = PhoneNumber;
-            this.Email = email;
-            this.Address = address;
+            Email = email;
+            Address = address;
         }
 
         public int Id { get; set; }
@@ -32,14 +32,13 @@ namespace PersonsAPIDataAccessLayer
 
     public class PersonsData
     {
-        private static string _connectionString = "Server=localhost;Database=SClinic;User Id=sa;Password=sa123456;TrustServerCertificate=True;";
-
+     
         public static List<PersonsDTO> GetAllPersons()
         {
             var PersonsList = new List<PersonsDTO>();
 
 
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = new SqlConnection(ConnectionClass.ConnectionString))
             {
                 using (SqlCommand cmd = new SqlCommand("SP_GetAllPersons", conn))
                 {
@@ -77,7 +76,7 @@ namespace PersonsAPIDataAccessLayer
 
         public static PersonsDTO GetPersonByID(int PersonID)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = new SqlConnection(ConnectionClass.ConnectionString))
             {
                 using (SqlCommand cmd = new SqlCommand("SP_GetPersonByID", conn))
                 {
@@ -119,7 +118,7 @@ namespace PersonsAPIDataAccessLayer
 
         public static int AddNewPerson(PersonsDTO NewPersonDTOInfo)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new SqlConnection(ConnectionClass.ConnectionString))
             {
                 using (var command = new SqlCommand("SP_AddNewPerson", connection))
                 {
@@ -150,7 +149,7 @@ namespace PersonsAPIDataAccessLayer
 
         public static bool UpdatePerson(PersonsDTO UpdatePersonDTOinfo)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new SqlConnection(ConnectionClass.ConnectionString))
             {
                 using (var command = new SqlCommand("SP_UpdatePerson", connection))
                 {
@@ -182,7 +181,7 @@ namespace PersonsAPIDataAccessLayer
         public static bool DeletePerson(int PersonId)
         {
             int rowsAffected = 0;
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new SqlConnection(ConnectionClass.ConnectionString))
             {
                 using (var command = new SqlCommand("SP_DeletePerson", connection))
                 {
@@ -193,13 +192,13 @@ namespace PersonsAPIDataAccessLayer
                     connection.Open();
 
                     rowsAffected = (int)command.ExecuteScalar();
-                    return (rowsAffected == 1);
+                    return rowsAffected == 1;
                 }
 
             }
 
 
-           
+
 
         }
 
@@ -209,12 +208,12 @@ namespace PersonsAPIDataAccessLayer
             int isFound = 0;
             bool isExist = false;
 
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new SqlConnection(ConnectionClass.ConnectionString))
             {
 
                 using (SqlCommand command = new SqlCommand("SP_CheckPersonExists", connection))
                 {
-                    command.CommandType= CommandType.StoredProcedure;
+                    command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@PersonId", PersonId);
 
                     SqlParameter returnParameter = new SqlParameter();
@@ -226,11 +225,11 @@ namespace PersonsAPIDataAccessLayer
 
                     isFound = (int)returnParameter.Value;
 
-                    isExist =  isFound != 0;
+                    isExist = isFound != 0;
                 }
             }
             return isExist;
-               
+
         }
 
         public static bool IsPersonHasRelation(int PersonId)
@@ -238,7 +237,7 @@ namespace PersonsAPIDataAccessLayer
             bool isFound = false;
             int returnValue = 0;
 
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new SqlConnection(ConnectionClass.ConnectionString))
             {
 
                 using (SqlCommand command = new SqlCommand("SP_CheckPersonRelations", connection))
@@ -249,7 +248,7 @@ namespace PersonsAPIDataAccessLayer
                     SqlParameter returnParameter = new SqlParameter();
                     returnParameter.Direction = ParameterDirection.ReturnValue;
                     command.Parameters.Add(returnParameter);
-                    
+
                     connection.Open();
                     command.ExecuteNonQuery();
                     returnValue = (int)returnParameter.Value;
@@ -266,4 +265,4 @@ namespace PersonsAPIDataAccessLayer
 }
 
 
- 
+
