@@ -132,7 +132,6 @@ namespace PersonAPIServerSide.Controllers
         }
 
 
-
         [HttpDelete("Delete/{id}", Name = "DeletePerson")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
