@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using PersonsAPIBusinessLayer.MedicalRecords;
 using PersonsAPIDataAccessLayer.MedicalRecords;
 
