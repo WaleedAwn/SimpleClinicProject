@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Reflection;
 using Microsoft.Data.SqlClient;
 using Microsoft.Identity.Client;
+
 namespace PersonsAPIDataAccessLayer.People
 {
     public class PersonsDTO
@@ -31,8 +32,8 @@ namespace PersonsAPIDataAccessLayer.People
     }
 
     public class PersonsData
-    {
-     
+    { 
+
         public static List<PersonsDTO> GetAllPersons()
         {
             var PersonsList = new List<PersonsDTO>();
