@@ -116,6 +116,14 @@ namespace PersonsAPIBusinessLayer.Payments
             return PaymentData.DeletePayment(paymentId);
         }
 
+        public static bool IsPaymentExists(int paymentId)
+        {
+            return PaymentData.IsPaymentExists(paymentId);
+        }
+        public static bool IsPaymentHasRelations(int paymentId)
+        {
+            return PaymentData.IsPaymentHasRelations(paymentId);
+        }
 
 
     }

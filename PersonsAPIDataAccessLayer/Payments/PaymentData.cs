@@ -148,7 +148,7 @@ namespace PersonsAPIDataAccessLayer.Payments
                 command.Parameters.AddWithValue("@AmountPaid", pDTO.AmountPaid);
                 command.Parameters.AddWithValue("@PaymentMethod", pDTO.PaymentMethod);
                 if (pDTO.PaymentMethod != null)
-                    command.Parameters.AddWithValue("@AdditionalNotes", pDTO.PaymentMethod);
+                    command.Parameters.AddWithValue("@AdditionalNotes", pDTO.AdditionalNotes);
                 else
                     command.Parameters.AddWithValue("@AdditionalNotes", DBNull.Value);
 
@@ -209,6 +209,41 @@ namespace PersonsAPIDataAccessLayer.Payments
             {
 
                 using (SqlCommand command = new SqlCommand("SP_CheckPaymentExists", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@PaymentId", paymentId);
+
+                    SqlParameter returnParameter = new SqlParameter();
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+                    command.Parameters.Add(returnParameter);
+
+                    try
+                    {
+                        connection.Open();
+                        command.ExecuteNonQuery();
+
+                        isExist = (int)returnParameter.Value != 0;
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+
+                }
+            }
+            return isExist;
+
+        }
+
+        public static bool IsPaymentHasRelations(int paymentId)
+        {
+
+            bool isExist = false;
+
+            using (SqlConnection connection = new SqlConnection(ConnectionClass.ConnectionString))
+            {
+
+                using (SqlCommand command = new SqlCommand("SP_CheckPaymentRelations", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@PaymentId", paymentId);
