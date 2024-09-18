@@ -26,7 +26,7 @@ namespace PersonAPIServerSide.Controllers
             return Ok(userList);
         }
 
-        [HttpGet("Find/Id={id}", Name = "GetUserById")] // Marks this method to respond to HTTP GET requests.
+        [HttpGet("Find/id={id}", Name = "GetUserById")] // Marks this method to respond to HTTP GET requests.
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -49,7 +49,6 @@ namespace PersonAPIServerSide.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public ActionResult<UserDTO> GetUserByName(string userName)
         {
             if (string.IsNullOrEmpty(userName))
@@ -69,6 +68,8 @@ namespace PersonAPIServerSide.Controllers
         [HttpPost("Add", Name = "AddUser")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
 
         public ActionResult<UserDTO> AddUser(UserDTO newUserDTO)
         {
@@ -119,6 +120,8 @@ namespace PersonAPIServerSide.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+
 
         public ActionResult<UserDTO> UpdateUser(int id, UserDTO updateUser)
         {
@@ -197,7 +200,9 @@ namespace PersonAPIServerSide.Controllers
         [HttpPost("CheckCredentials/UserName={userName}/Password{password}", Name = "CheckUserCredentials")] // Marks this method to respond to HTTP GET requests.
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
+
         public ActionResult CheckUserCredentials(string userName,string password)
         {
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
