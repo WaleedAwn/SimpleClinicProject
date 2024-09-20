@@ -123,10 +123,18 @@ namespace PersonsAPIBusinessLayer
                 case enMode.Update:
                     return _UpdateAppointment();
             }
-            return _UpdateAppointment();
+            return false;
         }
 
+        public static bool IsPersonHasActiveAppointmentWithDoctor(int paitentId, int doctorId)
+        {
+            return AppointmentData.IsPatientHasActiveAppointmentWithDoctor(paitentId, doctorId);
+        }
 
+        public static List<AllAppointmentDTO> GetAllPatientAppointments(int patientId)
+        {
+            return AppointmentData.GetAllPatientAppointments(patientId);
+        }
 
     }
 }

@@ -9,18 +9,18 @@ namespace PersonsAPIDataAccessLayer.Payments
 {
     public class PaymentDTO
     {
-        public PaymentDTO(int id, DateTime paymentDate, string paymentMethod, decimal amountPaid, string? additionalNotes)
+        public PaymentDTO(int id, DateTime paymentDate, int paymentMethodId, decimal amountPaid, string? additionalNotes)
         {
             Id = id;
             PaymentDate = paymentDate;
-            PaymentMethod = paymentMethod;
+            PaymentMethodId = paymentMethodId;
             AmountPaid = amountPaid;
             AdditionalNotes = additionalNotes;
         }
 
         public int Id { get; set; }
         public DateTime PaymentDate { get; set; }
-        public string PaymentMethod { get; set; }
+        public int PaymentMethodId { get; set; }
         public decimal AmountPaid   { get; set; }
         public string? AdditionalNotes { get; set; }
         

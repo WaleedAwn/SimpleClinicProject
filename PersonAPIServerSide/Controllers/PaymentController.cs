@@ -56,13 +56,13 @@ namespace PersonAPIServerSide.Controllers
         public ActionResult<PaymentDTO> AddPayment(PaymentDTO newPaymentDTO)
         {
             //we validate the data here
-            if (newPaymentDTO == null || string.IsNullOrEmpty(newPaymentDTO.PaymentMethod) || newPaymentDTO.AmountPaid < 0)
+            if (newPaymentDTO == null || newPaymentDTO.PaymentMethodId <1 || newPaymentDTO.AmountPaid < 0)
             {
                 return BadRequest("Invalid Payment data.");
             }
 
             
-            Payment payment = new Payment(new PaymentDTO(newPaymentDTO.Id,newPaymentDTO.PaymentDate,newPaymentDTO.PaymentMethod,newPaymentDTO.AmountPaid,newPaymentDTO.AdditionalNotes));
+            Payment payment = new Payment(new PaymentDTO(newPaymentDTO.Id,newPaymentDTO.PaymentDate,newPaymentDTO.PaymentMethodId,newPaymentDTO.AmountPaid,newPaymentDTO.AdditionalNotes));
 
             newPaymentDTO.Id = payment.Id;
 
@@ -86,7 +86,7 @@ namespace PersonAPIServerSide.Controllers
 
         public ActionResult<PaymentDTO> UpdatePayment(int id, PaymentDTO updatePayment)
         {
-            if (id<1 || updatePayment == null || string.IsNullOrEmpty(updatePayment.PaymentMethod) || updatePayment.AmountPaid < 0)
+            if (id<1 || updatePayment == null || updatePayment.PaymentMethodId<1 || updatePayment.AmountPaid < 0)
             {
                 return BadRequest("Invalid Payment data.");
             }
@@ -108,7 +108,7 @@ namespace PersonAPIServerSide.Controllers
 
 
             payment.PaymentDate = updatePayment.PaymentDate;
-            payment.PaymentMethod = updatePayment.PaymentMethod;
+            payment.PaymentMethodId = updatePayment.PaymentMethodId;
             payment.AmountPaid = updatePayment.AmountPaid;
             payment.AdditionalNotes = updatePayment.AdditionalNotes;
             

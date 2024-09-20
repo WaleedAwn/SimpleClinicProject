@@ -17,7 +17,7 @@ namespace PersonsAPIBusinessLayer.Payments
         {
             get
             {
-                return new PaymentDTO(this.Id, this.PaymentDate, this.PaymentMethod, this.AmountPaid, this.AdditionalNotes);
+                return new PaymentDTO(this.Id, this.PaymentDate, this.PaymentMethodId, this.AmountPaid, this.AdditionalNotes);
             }
         }
 
@@ -25,13 +25,14 @@ namespace PersonsAPIBusinessLayer.Payments
         {
             get
             {
-                return new PaymentDTOWithName(this.Id,this.PaidPatient, this.PaymentDate, this.PaymentMethod, this.AmountPaid, this.AdditionalNotes);
+                return new PaymentDTOWithName(this.Id,this.PaidPatient, this.PaymentDate, this.PaymentMethodId, this.PaymentMethod, this.AmountPaid, this.AdditionalNotes);
             }
         }
 
         public int Id { get; set; }
         public string PaidPatient { get; set; }
         public DateTime PaymentDate { get; set; }
+        public int PaymentMethodId { get; set; }
         public string PaymentMethod { get; set; }
         public decimal AmountPaid { get; set; }
         public string? AdditionalNotes { get; set; }
@@ -40,7 +41,7 @@ namespace PersonsAPIBusinessLayer.Payments
         {
             this.Id = pDTO.Id;
             this.PaymentDate  = pDTO.PaymentDate;
-            this.PaymentMethod = pDTO.PaymentMethod;
+            this.PaymentMethodId = pDTO.PaymentMethodId;
             this.AmountPaid = pDTO.AmountPaid;
             this.AdditionalNotes = pDTO.AdditionalNotes;
             Mode = enMode.AddNew;
@@ -52,6 +53,7 @@ namespace PersonsAPIBusinessLayer.Payments
             this.PaymentDate = pDTO.PaymentDate;
             this.PaidPatient = pDTO.PaidPatient;
             this.PaymentMethod = pDTO.PaymentMethod;
+            this.PaymentMethodId = PDTO.PaymentMethodId;
             this.AmountPaid = pDTO.AmountPaid;
             this.AdditionalNotes = pDTO.AdditionalNotes;
             Mode = enMode.Update;

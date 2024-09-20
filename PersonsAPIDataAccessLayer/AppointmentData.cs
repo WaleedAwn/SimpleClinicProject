@@ -292,6 +292,87 @@ namespace PersonsAPIDataAccessLayer
 
         }
 
+        public static bool IsPatientHasActiveAppointmentWithDoctor(int paitnetId, int doctorId)
+        {
+
+            bool isExist = false;
+
+            using (SqlConnection connection = new SqlConnection(ConnectionClass.ConnectionString))
+            {
+
+                using (SqlCommand command = new SqlCommand("SP_IsPatientHasActiveAppointmentWithSameDr", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@PatientId", paitnetId);
+                    command.Parameters.AddWithValue("@DoctorId", doctorId);
+
+
+                    SqlParameter returnParameter = new SqlParameter();
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+                    command.Parameters.Add(returnParameter);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+
+                    isExist = (int)returnParameter.Value != 0;
+                }
+            }
+            return isExist;
+
+        }
+
+        public static List<AllAppointmentDTO> GetAllPatientAppointments(int patientId)
+        {
+            var appointmentsList = new List<AllAppointmentDTO>();
+
+
+            using (SqlConnection conn = new SqlConnection(ConnectionClass.ConnectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("SP_GetAllPatientAppointments", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@PatientId", patientId);
+
+                    conn.Open();
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        int? medicalRecord;
+                        int? paymentId;
+                        while (reader.Read())
+                        {
+                            if (reader.GetValue("MedicalRecordId") != DBNull.Value)
+                                medicalRecord = reader.GetInt32(reader.GetOrdinal("DoctorId"));
+                            else
+                                medicalRecord = null;
+
+                            if (reader.GetValue("PaymentId") != DBNull.Value)
+                                paymentId = reader.GetInt32(reader.GetOrdinal("PaymentId"));
+                            else
+                                paymentId = null;
+
+                            appointmentsList.Add(new AllAppointmentDTO
+                            (
+
+                                reader.GetInt32(reader.GetOrdinal("AppointmentId")),
+                                reader.GetInt32(reader.GetOrdinal("PatientId")),
+                                reader.GetString(reader.GetOrdinal("PersonName")),
+                                reader.GetInt32(reader.GetOrdinal("DoctorId")),
+                                reader.GetString(reader.GetOrdinal("DoctorName")),
+                                reader.GetDateTime(reader.GetOrdinal("AppointmentDateTime")),
+                                reader.GetString(reader.GetOrdinal("AppointmentStatus")),
+                                medicalRecord,
+                                paymentId
+
+                            ));
+                        }
+                    }
+                }
+            }
+            return appointmentsList;
+
+        }
+
 
 
     }

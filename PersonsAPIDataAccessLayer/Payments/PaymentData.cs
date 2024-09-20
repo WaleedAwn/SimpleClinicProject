@@ -39,6 +39,7 @@ namespace PersonsAPIDataAccessLayer.Payments
                                 reader.GetInt32(reader.GetOrdinal("PaymentId")),
                                 reader.GetString(reader.GetOrdinal("PaidPatient")),
                                 reader.GetDateTime(reader.GetOrdinal("PaymentDate")),
+                                reader.GetInt32(reader.GetOrdinal("PaymentMethodId")),
                                 reader.GetString(reader.GetOrdinal("PaymentMethod")),
                                 reader.GetDecimal(reader.GetOrdinal("AmountPaid")),
                                 notes
@@ -77,6 +78,7 @@ namespace PersonsAPIDataAccessLayer.Payments
                                 reader.GetInt32(reader.GetOrdinal("PaymentId")),
                                 reader.GetString(reader.GetOrdinal("PaidPatient")),
                                 reader.GetDateTime(reader.GetOrdinal("PaymentDate")),
+                                reader.GetInt32(reader.GetOrdinal("PaymentMethodId")),
                                 reader.GetString(reader.GetOrdinal("PaymentMethod")),
                                 reader.GetDecimal(reader.GetOrdinal("AmountPaid")),
                                 notes
@@ -102,9 +104,10 @@ namespace PersonsAPIDataAccessLayer.Payments
 
                 command.Parameters.AddWithValue("@PaymentDate", pDTO.PaymentDate);
                 command.Parameters.AddWithValue("@AmountPaid", pDTO.AmountPaid);
-                command.Parameters.AddWithValue("@PaymentMethod", pDTO.PaymentMethod);
-                if (pDTO.PaymentMethod  != null)
-                    command.Parameters.AddWithValue("@AdditionalNotes", pDTO.PaymentMethod);
+                command.Parameters.AddWithValue("@PaymentMethod", pDTO.PaymentMethodId);
+                
+                if (pDTO.AdditionalNotes  != null)
+                    command.Parameters.AddWithValue("@AdditionalNotes", pDTO.AdditionalNotes);
                 else
                     command.Parameters.AddWithValue("@AdditionalNotes", DBNull.Value);
 
@@ -146,8 +149,8 @@ namespace PersonsAPIDataAccessLayer.Payments
                 command.Parameters.AddWithValue("@PaymentId", pDTO.Id);
                 command.Parameters.AddWithValue("@PaymentDate", pDTO.PaymentDate);
                 command.Parameters.AddWithValue("@AmountPaid", pDTO.AmountPaid);
-                command.Parameters.AddWithValue("@PaymentMethod", pDTO.PaymentMethod);
-                if (pDTO.PaymentMethod != null)
+                command.Parameters.AddWithValue("@PaymentMethod", pDTO.PaymentMethodId);
+                if (pDTO.AdditionalNotes != null)
                     command.Parameters.AddWithValue("@AdditionalNotes", pDTO.AdditionalNotes);
                 else
                     command.Parameters.AddWithValue("@AdditionalNotes", DBNull.Value);

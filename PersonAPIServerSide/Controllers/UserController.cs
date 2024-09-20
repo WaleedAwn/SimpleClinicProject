@@ -197,12 +197,10 @@ namespace PersonAPIServerSide.Controllers
                 return NotFound($"User with ID {id} not found. no rows deleted!");
         }
 
-        [HttpPost("CheckCredentials/UserName={userName}/Password{password}", Name = "CheckUserCredentials")] // Marks this method to respond to HTTP GET requests.
+        [HttpGet("CheckCredentials/UserName={userName}/Password{password}", Name = "CheckUserCredentials")] // Marks this method to respond to HTTP GET requests.
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-
-
         public ActionResult CheckUserCredentials(string userName,string password)
         {
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
@@ -216,6 +214,45 @@ namespace PersonAPIServerSide.Controllers
             return Ok(true);
 
         }
+
+
+        [HttpGet("IsUserExists/UserName={userName}", Name = "CheckUserExists")] // Marks this method to respond to HTTP GET requests.
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+
+        public ActionResult IsUserExist(string userName)
+        {
+            if (string.IsNullOrEmpty(userName) )
+                return BadRequest($"Username is required!");
+
+            if (!PersonsAPIBusinessLayer.Users.User.IsUserExists(userName))
+                return NotFound("User is not found");
+
+
+            return Ok(true);
+
+        }
+
+        [HttpGet("IsPersonUser/PersonId/{id}", Name = "CheckPersonUser")] // Marks this method to respond to HTTP GET requests.
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+
+        public ActionResult IsPersonUser(int id)
+        {
+            if (id < 1)
+                return BadRequest($"Person Id invalid");
+
+            if (!PersonsAPIBusinessLayer.Users.User.IsPersonUser(id))
+                return NotFound("Person is not user");
+
+
+            return Ok(true);
+
+        }
+
+
 
 
     }
