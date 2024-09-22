@@ -138,6 +138,7 @@ namespace PersonsAPIDataAccessLayer.People
                         Direction = ParameterDirection.Output
                     };
                     command.Parameters.Add(outPutIdParm);
+                    
                     connection.Open();
                     command.ExecuteNonQuery();
                     return (int)outPutIdParm.Value;

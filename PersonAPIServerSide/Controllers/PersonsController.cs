@@ -13,14 +13,12 @@ namespace PersonAPIServerSide.Controllers
 {
     //[Route("api/[controller]")]
     [Route("api/Persons")]
-
     [ApiController]
     public class PersonsController : ControllerBase
     {
+
         
-
         [HttpGet("All", Name = "GetAllPersons")]
-
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<PersonsDTO>> GetAllPersons()

@@ -19,7 +19,7 @@ namespace PersonsAPIBusinessLayer
         {
             get
             {
-                return new AllAppointmentDTO(this.Id, this.PatientId, this.PersonName, this.DoctorId, this.DoctorName, this.AppointmentDate, this.AppointmentStatusCaption, this.MedicalRecordId, this.PaymentId)
+                return new AllAppointmentDTO(this.Id, this.PatientId, this.PersonName, this.DoctorId, this.DoctorName, this.Specialization, this.AppointmentDate, this.AppointmentStatusCaption, this.MedicalRecordId, this.PaymentId)
 ;           }
         }
 
@@ -52,6 +52,7 @@ namespace PersonsAPIBusinessLayer
             AppointmentDate = ADTO.AppointmentDate;
             AppointmentStatusCaption = ADTO.AppointmentStatus;
             MedicalRecordId = ADTO.MedicalRecordId;
+            Specialization = ADTO.Specialization;
             PaymentId = ADTO.PaymentId;
             Mode = mode;
         }
@@ -64,7 +65,7 @@ namespace PersonsAPIBusinessLayer
 
         public string AppointmentStatusCaption { get; set; }
         public byte AppointmentStatus { get; set; }
-
+        public string Specialization {  get; set; }
         public int? MedicalRecordId { get; set; }
         public int? PaymentId { get; set; }
 

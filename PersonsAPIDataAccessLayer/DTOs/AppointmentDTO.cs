@@ -24,7 +24,6 @@ namespace PersonsAPIDataAccessLayer.DTOs
         public int DoctorId { get; set; }
 
         public DateTime AppointmentDate { get; set; }
-        
         public byte AppointmentStatus { get; set; }
 
         public int? MedicalRecordId { get; set; }
@@ -36,7 +35,7 @@ namespace PersonsAPIDataAccessLayer.DTOs
 
     public class AllAppointmentDTO
     {
-        public AllAppointmentDTO(int id, int patientId, string personName, int doctorId, string doctorName, DateTime appointmentDate, string appointmentStatus, int? medicalRecordId, int? paymentId)
+        public AllAppointmentDTO(int id, int patientId, string personName, int doctorId, string doctorName, string specialization, DateTime appointmentDate, string appointmentStatus, int? medicalRecordId, int? paymentId)
         {
             Id = id;
             PatientId = patientId;
@@ -47,6 +46,7 @@ namespace PersonsAPIDataAccessLayer.DTOs
             AppointmentStatus = appointmentStatus;
             MedicalRecordId = medicalRecordId;
             PaymentId = paymentId;
+            this.Specialization = specialization;
         }
 
         public int Id { get; set; }
@@ -54,6 +54,8 @@ namespace PersonsAPIDataAccessLayer.DTOs
         public string PersonName { get; set; }
         public int DoctorId { get; set; }
         public string DoctorName { get; set; }
+        public string Specialization { get; set; }
+
         public DateTime AppointmentDate { get; set; }
 
         public string AppointmentStatus { get; set; }

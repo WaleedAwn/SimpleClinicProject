@@ -173,7 +173,6 @@ namespace PersonsAPIDataAccessLayer.Patients
         }
 
 
-
         public static bool IsPatientExist(int patientId)
         {
             int isFound = 0;
