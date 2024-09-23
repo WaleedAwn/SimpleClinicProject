@@ -131,16 +131,16 @@ namespace PersonAPIServerSide.Controllers
         {
             if (id<1 || aDTO == null || aDTO.PatientId < 1
                || aDTO.DoctorId < 1
-               || aDTO.AppointmentStatus < 1 || aDTO.AppointmentStatus > 3
+               || aDTO.AppointmentStatus < 1 || aDTO.AppointmentStatus > 4
                )
             {
                 return BadRequest("Invalid Appointment data");
             }
 
 
-            if (aDTO.AppointmentStatus < 1 || aDTO.AppointmentStatus > 3)
+            if (aDTO.AppointmentStatus < 1 || aDTO.AppointmentStatus > 4)
             {
-                return BadRequest($"appointment status are 1 -> New, 2 -> Cancelled, 3 -> Completed!");
+                return BadRequest($"appointment status are 1 -> New, 2 -> Cancelled, 3 -> Waiting, 4->Completed!");
             }
 
             if (!PatientsData.IsPatientExist(aDTO.PatientId))
@@ -251,6 +251,11 @@ namespace PersonAPIServerSide.Controllers
 
             if (appointment.AppointmentStatus == 3)
             {
+                return Conflict($"Appointment With Id [{id}] is already waiting!");
+            }
+
+            if (appointment.AppointmentStatus == 4)
+            {
                 return Conflict($"Appointment With Id [{id}] is already completed!");
             }
 
@@ -258,12 +263,20 @@ namespace PersonAPIServerSide.Controllers
             {
                 case 2:
                     {
-                        if (Appointment.IsAppointmentHasRelations(id))
-                            return Conflict($"Cannot cancel Appointment with Id[{id}]\nbecause it has relations");
+                        if (appointment.MedicalRecordId != null)
+                            return Conflict($"Cannot cancel Appointment with Id[{id}]\nbecause it has medical Record relations");
 
                     }
                     break;
                 case 3:
+                    {
+                        if(appointment.PaymentId == null)
+                        {
+                            return Conflict("Pay the fees first to be in the waiting Stage!");
+                        }
+                    }
+                    break;
+                case 4:
                     {
                         if (!Appointment.IsAppointmentHasRelations(id))
                             return Conflict($"Appointment with Id[{id}] not complete yet");
@@ -275,12 +288,12 @@ namespace PersonAPIServerSide.Controllers
             }
             
 
-            if ( status < 1 || status > 3)
+            if ( status < 1 || status > 4)
             {
-                return BadRequest($"appointment status are 1 -> New, 2 -> Cancelled, 3 -> Completed!");
+                return BadRequest($"appointment status are 1 -> New, 2 -> Cancelled, 3 -> Waiting, 4->Completed!");
             }
 
-            
+
 
             if (Appointment.UpdateStatus(id,status))
             {
