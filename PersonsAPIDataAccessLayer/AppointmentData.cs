@@ -214,6 +214,45 @@ namespace PersonsAPIDataAccessLayer
             return rowsAffected > 0;
         }
 
+        public static bool UpdateAppointmentStatus(int id, byte status)
+        {
+            int rowsAffected = 0;
+            using (var connection = new SqlConnection(ConnectionClass.ConnectionString))
+            {
+                using (var command = new SqlCommand("SP_UpdateAppointmentStatus", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@AppointmentId", id);
+
+                    command.Parameters.AddWithValue("@AppointmentStatus", status);
+                   
+
+                    var outPutIdParm = new SqlParameter("@RowsAffected", SqlDbType.Int)
+                    {
+                        Direction = ParameterDirection.Output
+                    };
+                    command.Parameters.Add(outPutIdParm);
+
+                    try
+                    {
+                        connection.Open();
+                        command.ExecuteNonQuery();
+                        rowsAffected = (int)outPutIdParm.Value;
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+
+
+
+                }
+
+            }
+            return rowsAffected > 0;
+        }
+
+
         public static bool DeleteAppointment(int appointmentId)
         {
             int rowsAffected = 0;

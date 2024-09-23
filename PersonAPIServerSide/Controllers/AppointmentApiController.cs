@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PersonsAPIBusinessLayer;
 using PersonsAPIBusinessLayer.People;
 using PersonsAPIDataAccessLayer;
@@ -220,6 +221,79 @@ namespace PersonAPIServerSide.Controllers
             }
 
         }
+
+
+        [HttpPut("UpdateStatus/Id={id}/Status={status}", Name = "UpdateAppointmentStatus")]
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public ActionResult<AppointmentDTO> UpdateAppointmentStatus(int id, byte status)
+        {
+            if (id <1 )
+            {
+                return BadRequest("Invalid Appointment Id");
+            }
+
+            Appointment appointment = Appointment.Find(id);
+
+            if (appointment == null)
+            {
+                return NotFound($"No Appointment found with Id {id}");
+            }
+
+            if (appointment.AppointmentStatus == 2)
+            {
+                return Conflict($"Appointment With Id [{id}] is already cancelled!");
+            }
+
+            if (appointment.AppointmentStatus == 3)
+            {
+                return Conflict($"Appointment With Id [{id}] is already completed!");
+            }
+
+            switch(status)
+            {
+                case 2:
+                    {
+                        if (Appointment.IsAppointmentHasRelations(id))
+                            return Conflict($"Cannot cancel Appointment with Id[{id}]\nbecause it has relations");
+
+                    }
+                    break;
+                case 3:
+                    {
+                        if (!Appointment.IsAppointmentHasRelations(id))
+                            return Conflict($"Appointment with Id[{id}] not complete yet");
+
+                    }
+                    break;
+                default:
+                    break;
+            }
+            
+
+            if ( status < 1 || status > 3)
+            {
+                return BadRequest($"appointment status are 1 -> New, 2 -> Cancelled, 3 -> Completed!");
+            }
+
+            
+
+            if (Appointment.UpdateStatus(id,status))
+            {
+                //return the DTO not the Full Object
+                return Ok(true);
+            }
+            else
+            {
+                return StatusCode(500, new { message = " Error Updating Appointment status"});
+            }
+
+        }
+
 
 
 

@@ -37,7 +37,7 @@ namespace PersonsAPIBusinessLayer
             this.PatientId = aDTO.PatientId;
             this.DoctorId = aDTO.DoctorId;
             this.AppointmentDate = aDTO.AppointmentDate;
-            this.AppointmentStatus = aDTO.AppointmentStatus;
+            _appointmentStatus = aDTO.AppointmentStatus;
             this.MedicalRecordId = aDTO.MedicalRecordId;
             this.PaymentId = aDTO.PaymentId;
             Mode = mode;
@@ -64,7 +64,32 @@ namespace PersonsAPIBusinessLayer
         public DateTime AppointmentDate { get; set; }
 
         public string AppointmentStatusCaption { get; set; }
-        public byte AppointmentStatus { get; set; }
+        private byte _appointmentStatus;
+        public byte AppointmentStatus
+        {
+            get
+            {
+                switch (AppointmentStatusCaption)
+                {
+                    case "New":
+                        return 1;
+                    case "Cancelled":
+                        return 2;
+                    case "Completed":
+                        return 3;
+                }
+                return _appointmentStatus;
+            }
+            set
+            {
+                _appointmentStatus = value;
+            }
+        }
+
+
+
+
+
         public string Specialization {  get; set; }
         public int? MedicalRecordId { get; set; }
         public int? PaymentId { get; set; }
@@ -84,6 +109,11 @@ namespace PersonsAPIBusinessLayer
         public static List<AllAppointmentDTO> GetAllAppointments()
         {
             return AppointmentData.GetAllAppointments();
+        }
+
+        public static bool UpdateStatus(int id, byte status)
+        {
+            return AppointmentData.UpdateAppointmentStatus(id, status);
         }
 
         public static Appointment Find(int id)
