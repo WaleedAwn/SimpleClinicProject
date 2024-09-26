@@ -73,7 +73,7 @@ namespace PersonsAPIDataAccessLayer.Payments
                             paymentsList.Add(new PaymentMethodDTO
                             (
                                 reader.GetInt32(reader.GetOrdinal("MethodId")),
-                                reader.GetString(reader.GetOrdinal("Name"))
+                                reader.GetString(reader.GetOrdinal("MethodName"))
                              
                             ));
                         }
