@@ -11,7 +11,7 @@ namespace PersonsAPIDataAccessLayer.Prescriptions
 {
     public class PrescriptionsDTO
     {
-        public PrescriptionsDTO(int prescriptionID, int MedicalRecordID, string MedicationName, string Dosage, string Frequency, DateTime StartDate, DateTime EndDate, string? SpecialInstructions)
+        public PrescriptionsDTO(int prescriptionID, int? MedicalRecordID, string MedicationName, string Dosage, string Frequency, DateTime StartDate, DateTime EndDate, string? SpecialInstructions)
         {
             this.PrescriptionID = prescriptionID;
             this.MedicalRecordID = MedicalRecordID;
@@ -25,7 +25,7 @@ namespace PersonsAPIDataAccessLayer.Prescriptions
         }
 
         public int PrescriptionID { get; set; }
-        public int MedicalRecordID { get; set; }
+        public int? MedicalRecordID { get; set; }
         public string MedicationName { get; set; }
         public string Dosage { get; set; }
         public string Frequency { get; set; }
@@ -51,21 +51,33 @@ namespace PersonsAPIDataAccessLayer.Prescriptions
 
                     conn.Open();
 
+                    
+
+
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
+                       
+                        string special = null;
                         while (reader.Read())
                         {
+                            if (reader.GetValue("SpecialInstructions") == DBNull.Value)
+                                special = null;
+                            else
+                                special = reader.GetString(reader.GetOrdinal("SpecialInstructions"));
+
                             sList.Add(new PrescriptionsDTO
                             (
+                                    
                                 //(PrescriptionID, MedicalRecordID, MedicationName, Dosage, Frequency, StartDate, EndDate
                                 reader.GetInt32(reader.GetOrdinal("PrescriptionID")),
-                                reader.GetInt32(reader.GetOrdinal("MedicalRecordID")),
+                                 
+                                 reader.GetInt32(reader.GetOrdinal("MedicalRecordID")),
                                 reader.GetString(reader.GetOrdinal("MedicationName")),
                                 reader.GetString(reader.GetOrdinal("Dosage")),
                                 reader.GetString(reader.GetOrdinal("Frequency")),
                                 reader.GetDateTime(reader.GetOrdinal("StartDate")),
                                 reader.GetDateTime(reader.GetOrdinal("EndDate")),
-                                reader.GetString(reader.GetOrdinal("SpecialInstructions"))
+                                special
 
 
                             ));
@@ -91,24 +103,29 @@ namespace PersonsAPIDataAccessLayer.Prescriptions
                     cmd.Parameters.AddWithValue("@PrescriptionID", PrescriptionID);
 
                     conn.Open();
+                    string special = null;
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
+                       
                         if (reader.Read())
                         {
+                            if (reader.GetValue("SpecialInstructions") == DBNull.Value)
+                                special = null;
+                            else
+                                special = reader.GetString(reader.GetOrdinal("SpecialInstructions"));
+
                             return new PrescriptionsDTO
                              (
 
-                                 reader.GetInt32(reader.GetOrdinal("PrescriptionID")),
+                                reader.GetInt32(reader.GetOrdinal("PrescriptionID")),
                                 reader.GetInt32(reader.GetOrdinal("MedicalRecordID")),
                                 reader.GetString(reader.GetOrdinal("MedicationName")),
                                 reader.GetString(reader.GetOrdinal("Dosage")),
                                 reader.GetString(reader.GetOrdinal("Frequency")),
                                 reader.GetDateTime(reader.GetOrdinal("StartDate")),
                                 reader.GetDateTime(reader.GetOrdinal("EndDate")),
-                                reader.GetString(reader.GetOrdinal("SpecialInstructions"))
-
-
+                                special
                              );
                         }
 
@@ -133,13 +150,13 @@ namespace PersonsAPIDataAccessLayer.Prescriptions
                     //(PrescriptionID, Name, MedicationName, Dosage, Frequency, StartDate, EndDate
                     command.CommandType = CommandType.StoredProcedure;
                     //command.Parameters.AddWithValue("@PrescriptionID", NewDTOInfo.PrescriptionID);
-                    command.Parameters.AddWithValue("MedicalRecordID", NewDTOInfo.MedicalRecordID);
+                    command.Parameters.AddWithValue("@MedicalRecordID", NewDTOInfo.MedicalRecordID??(object)DBNull.Value);
                     command.Parameters.AddWithValue("@MedicationName", NewDTOInfo.MedicationName);
                     command.Parameters.AddWithValue("@Dosage", NewDTOInfo.Dosage);
                     command.Parameters.AddWithValue("@Frequency", NewDTOInfo.Frequency);
                     command.Parameters.AddWithValue("@StartDate", NewDTOInfo.StartDate.Date);
                     command.Parameters.AddWithValue("@EndDate", NewDTOInfo.EndDate.Date);
-                    command.Parameters.AddWithValue("@SpecialInstructions", NewDTOInfo.SpecialInstructions);
+                    command.Parameters.AddWithValue("@SpecialInstructions", NewDTOInfo.SpecialInstructions??(object)DBNull.Value);
 
                     var outPutPrescriptionIDParm = new SqlParameter("@NewPrescriptionID", SqlDbType.Int)
                     {
@@ -165,13 +182,13 @@ namespace PersonsAPIDataAccessLayer.Prescriptions
                     command.CommandType = CommandType.StoredProcedure;
 
                     command.Parameters.AddWithValue("@PrescriptionID", UpdateDTOinfo.PrescriptionID);
-                    command.Parameters.AddWithValue("MedicalRecordID", UpdateDTOinfo.MedicalRecordID);
+                    command.Parameters.AddWithValue("@MedicalRecordID", UpdateDTOinfo.MedicalRecordID??(object)DBNull.Value);
                     command.Parameters.AddWithValue("@MedicationName", UpdateDTOinfo.MedicationName);
                     command.Parameters.AddWithValue("@Dosage", UpdateDTOinfo.Dosage);
                     command.Parameters.AddWithValue("@Frequency", UpdateDTOinfo.Frequency);
                     command.Parameters.AddWithValue("@StartDate", UpdateDTOinfo.StartDate);
                     command.Parameters.AddWithValue("@EndDate", UpdateDTOinfo.EndDate);
-                    command.Parameters.AddWithValue("@SpecialInstructions", UpdateDTOinfo.SpecialInstructions);
+                    command.Parameters.AddWithValue("@SpecialInstructions", UpdateDTOinfo.SpecialInstructions??(object)DBNull.Value);
 
                     var outPutPrescriptionIDParm = new SqlParameter("@RowsAffected", SqlDbType.Int)
                     {
