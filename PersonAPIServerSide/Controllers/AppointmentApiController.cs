@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PersonsAPIBusinessLayer;
+using PersonsAPIBusinessLayer.Payments;
 using PersonsAPIBusinessLayer.People;
 using PersonsAPIDataAccessLayer;
 using PersonsAPIDataAccessLayer.Doctors;
@@ -57,7 +58,7 @@ namespace PersonAPIServerSide.Controllers
         {
             if (id < 1)
             {
-                return BadRequest("bad Request");
+                return BadRequest("Invalid Id data");
             }
 
             Appointment appointment = Appointment.Find(id);
@@ -72,6 +73,35 @@ namespace PersonAPIServerSide.Controllers
 
             return Ok(aDTO);
         }
+
+        [HttpGet("Find/PaymentId={id}", Name = "GetAppointmentIdByPaymentID")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<int> GetAppointmentIdByPaymentId(int id)
+        {
+            if (id < 1)
+            {
+                return BadRequest("Invalid Id data");
+            }
+
+            if(!Payment.IsPaymentExists(id))
+            {
+                return BadRequest($"Payment with Id[{id}] is not exists!");
+            }
+
+            int appointmentId = Appointment.GetAppointmentIdbyPaymentId(id);
+
+            if (appointmentId == -1)
+            {
+                return NotFound($"No Appointment found for payment with Id [{id}]");
+            }
+
+            
+            return Ok(appointmentId);
+        }
+
+
 
 
         [HttpPost("Add", Name = "AddAppointment")]

@@ -120,6 +120,32 @@ namespace PersonsAPIDataAccessLayer
 
         }
 
+        public static int GetAppointmentIdByPaymentID(int paymentId)
+        {
+            int appointmentId = -1;
+            using (SqlConnection conn = new SqlConnection(ConnectionClass.ConnectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("SP_GetAppointmentIdByPaymentId", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@PaymentId", paymentId);
+
+                    conn.Open();
+
+                    object appId = cmd.ExecuteScalar();
+                    if(appId != null && int.TryParse(appId.ToString(),out int result) )
+                    {
+                        appointmentId = result;
+                    }
+
+                }
+
+            }
+            return appointmentId;
+        }
+
+
+
         public static int AddNewAppointment(AppointmentDTO aDTO)
         {
             int appointmentId = -1;

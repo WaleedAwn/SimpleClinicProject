@@ -30,6 +30,24 @@ namespace PersonAPIServerSide.Controllers
         }
 
 
+        [HttpGet("PaymentMethods", Name = "GetAllPaymentMethods")] // Marks this method to respond to HTTP GET requests.
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+
+        public ActionResult<IEnumerable<PaymentMethodDTO>> GetAllPaymentMethods()
+        {
+            List<PaymentMethodDTO> paymentList = Payment.GetAllPaymentMethods();
+
+            if (paymentList.Count == 0)
+            {
+                return NotFound("No payment methods Found!");
+            }
+
+            return Ok(paymentList);
+        }
+
+
+
         [HttpGet("Find/Id={id}", Name = "GetPaymentById")] // Marks this method to respond to HTTP GET requests.
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -127,6 +145,9 @@ namespace PersonAPIServerSide.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
         public ActionResult DeletePayment(int id)
         {
             if (id < 1)
@@ -147,7 +168,8 @@ namespace PersonAPIServerSide.Controllers
             if (Payment.Delete(id))
                 return Ok($"Payment with ID {id} has been deleted.");
             else
-                return NotFound($"Payment with ID {id} not found. no rows deleted!");
+                return StatusCode(500, new { message = "Erorr deleting payment" });
+            ;
         }
 
 

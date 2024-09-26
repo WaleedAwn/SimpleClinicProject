@@ -53,6 +53,39 @@ namespace PersonsAPIDataAccessLayer.Payments
             return paymentsList;
         }
 
+        public static List<PaymentMethodDTO> GetAllpaymentMethods()
+        {
+            List<PaymentMethodDTO> paymentsList = new List<PaymentMethodDTO>();
+
+            using (SqlConnection conn = new SqlConnection(ConnectionClass.ConnectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("SP_GetAllPaymentMethods", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    conn.Open();
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            
+                            paymentsList.Add(new PaymentMethodDTO
+                            (
+                                reader.GetInt32(reader.GetOrdinal("MethodId")),
+                                reader.GetString(reader.GetOrdinal("Name"))
+                             
+                            ));
+                        }
+                    }
+                }
+
+            }
+
+            return paymentsList;
+        }
+
+
         public static PaymentDTOWithName GetPaymentById(int paymentId)
         {
 

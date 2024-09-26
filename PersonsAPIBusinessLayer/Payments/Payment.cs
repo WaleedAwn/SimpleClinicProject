@@ -73,6 +73,10 @@ namespace PersonsAPIBusinessLayer.Payments
         {
             return PaymentData.GetAllpayments();
         }
+        public static List<PaymentMethodDTO> GetAllPaymentMethods()
+        {
+            return PaymentData.GetAllpaymentMethods();
+        }
         public static Payment Find(int paymentId)
         {
             PaymentDTOWithName uDTO = PaymentData.GetPaymentById(paymentId);

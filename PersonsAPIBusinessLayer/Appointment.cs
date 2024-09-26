@@ -125,6 +125,10 @@ namespace PersonsAPIBusinessLayer
                 return null;
         }
         
+        public static int GetAppointmentIdbyPaymentId(int paymentId)
+        {
+            return AppointmentData.GetAppointmentIdByPaymentID(paymentId);
+        }
         public static bool Delete(int id)
         {
             return AppointmentData.DeleteAppointment(id);
