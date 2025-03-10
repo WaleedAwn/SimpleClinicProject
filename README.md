@@ -43,4 +43,4 @@ To get a local copy up and running, follow these steps:
 
 1. *Clone the Repository:*
    ```bash
-   git clone https://github.com/yourusername/SimpleClinicProject.git
+   git clone https://github.com/WaleedAwn/SimpleClinicProject.git
