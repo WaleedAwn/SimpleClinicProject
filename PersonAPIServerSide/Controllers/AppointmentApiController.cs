@@ -17,11 +17,12 @@ namespace PersonAPIServerSide.Controllers
     [ApiController]
     public class AppointmentApiController : ControllerBase
     {
-
+       
+         
         [HttpGet("All", Name = "GetAllAppointments")]
-
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+
         public ActionResult<IEnumerable<AllAppointmentDTO>> GetAllAppointments()
         {
             var appointmentList = Appointment.GetAllAppointments();
