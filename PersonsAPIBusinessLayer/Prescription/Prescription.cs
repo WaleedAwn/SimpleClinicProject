@@ -20,7 +20,7 @@ namespace PersonsAPIBusinessLayer.Prescriptions
                     Dosage, Frequency, StartDate, EndDate, SpecialInstructions); }
             }
         public int PrescriptionID { get; set; }
-        public int MedicalRecordID { get; set; }
+        public int? MedicalRecordID { get; set; }
         public string MedicationName { get; set; }
         public string Dosage { get; set; }
         public string Frequency { get; set; }

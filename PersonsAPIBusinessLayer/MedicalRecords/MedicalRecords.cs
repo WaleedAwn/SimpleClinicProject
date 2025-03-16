@@ -1,5 +1,6 @@
 ﻿using System;
 using PersonsAPIDataAccessLayer.MedicalRecords;
+
 namespace PersonsAPIBusinessLayer.MedicalRecords
 {
     public class MedicalRecords
@@ -9,14 +10,16 @@ namespace PersonsAPIBusinessLayer.MedicalRecords
 
         public MedicalRecordsDTO SDTO
         {
-            get { return new MedicalRecordsDTO(MedicalRecordID, VisitDescription,Diagnosis,AdditionalNotes); }
+            get { return new MedicalRecordsDTO(MedicalRecordID, VisitDescription, Diagnosis, AdditionalNotes); }
         }
-
-
+        
         public int MedicalRecordID { get; set; }
-        public string VisitDescription { get; set; }
-        public string Diagnosis { get; set; }
-        public string AdditionalNotes { get; set; }
+        public string? VisitDescription { get; set; }
+        public string? Diagnosis { get; set; }
+        public string? AdditionalNotes { get; set; }
+    
+
+
 
 
         public MedicalRecords(MedicalRecordsDTO sDTO, enMode cMode = enMode.AddNew)
@@ -29,14 +32,14 @@ namespace PersonsAPIBusinessLayer.MedicalRecords
             Mode = cMode;
         }
 
-        public static List<MedicalRecordsDTO> GetAllMedicalRecords()
+        public static async Task<List<MedicalRecordsDTO>> GetAllMedicalRecords()
         {
-            return MedicalRecordsData.GetAllMedicalRecords();
+            return await MedicalRecordsData.GetAllMedicalRecords();
         }
 
-        public static MedicalRecords Find(int MedicalRecordID)
+        public static async Task<MedicalRecords> Find(int MedicalRecordID)
         {
-            MedicalRecordsDTO sDTO = MedicalRecordsData.GetMedicalRecordByID(MedicalRecordID);
+            MedicalRecordsDTO sDTO = await MedicalRecordsData.GetMedicalRecordByID(MedicalRecordID);
             if (sDTO != null)
             {
                 return new MedicalRecords(sDTO, enMode.Update);
@@ -44,42 +47,42 @@ namespace PersonsAPIBusinessLayer.MedicalRecords
             return null;
         }
 
-        private bool _AddNewMedicalRecord()
+        private async Task<int> _AddNewMedicalRecord()
         {
-            MedicalRecordID = MedicalRecordsData.AddNewMedicalRecord(SDTO);
-            return MedicalRecordID != -1;
+            MedicalRecordID = await MedicalRecordsData.AddNewMedicalRecord(SDTO);
+            return MedicalRecordID ;
         }
 
-        private bool _UpdateMedicalRecord()
+        private Task<bool> _UpdateMedicalRecord()
         {
             return MedicalRecordsData.UpdateMedicalRecord(SDTO); // Fixed: UpdatePerson instead of UpdateStudent
         }
 
-        public bool Save()
+        public async Task<bool> SaveAsync()
         {
             switch (Mode)
             {
                 case enMode.AddNew:
-                    if (_AddNewMedicalRecord())
+                    if (await _AddNewMedicalRecord()!=-1)
                     {
                         Mode = enMode.Update;
                         return true;
                     }
                     return false;
                 case enMode.Update:
-                    return _UpdateMedicalRecord();
+                    return await _UpdateMedicalRecord();
             }
             return false;
         }
 
-        public static bool DeleteMedicalRecord(int MedicalRecordID)
+        public static async Task<bool> DeleteMedicalRecord(int MedicalRecordID)
         {
-            return MedicalRecordsData.DeleteMedicalRecord(MedicalRecordID);
+            return await MedicalRecordsData.DeleteMedicalRecord(MedicalRecordID);
         }
      
-        public static bool IsMedicalRecordExists(int MedicalRecordID)
+        public static async Task<bool> IsMedicalRecordExists(int MedicalRecordID)
         {
-            return MedicalRecordsData.IsMedicalRecordExist(MedicalRecordID);
+            return await MedicalRecordsData.IsMedicalRecordExist(MedicalRecordID);
         }
     }
 

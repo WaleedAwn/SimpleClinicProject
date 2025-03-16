@@ -17,9 +17,9 @@ namespace MedicalRecordsAPIServerSide.Controllers
 
             [ProducesResponseType(StatusCodes.Status200OK)]
             [ProducesResponseType(StatusCodes.Status404NotFound)]
-            public ActionResult<IEnumerable<MedicalRecordsDTO>> GetAllMedicalRecords()
+            public async Task<ActionResult<IEnumerable<MedicalRecordsDTO>>> GetAllMedicalRecords()
             {
-                var MedicalRecordsList = MedicalRecords.GetAllMedicalRecords();
+                var MedicalRecordsList = await MedicalRecords.GetAllMedicalRecords();
                 if (MedicalRecordsList.Count == 0)
                 {
                     return NotFound("No MedicalRecords Found");
@@ -32,14 +32,14 @@ namespace MedicalRecordsAPIServerSide.Controllers
             [ProducesResponseType(StatusCodes.Status200OK)]
             [ProducesResponseType(StatusCodes.Status400BadRequest)]
             [ProducesResponseType(StatusCodes.Status404NotFound)]
-            public ActionResult<MedicalRecordsDTO> GetMedicalRecordsByID(int id)
+            public async Task<ActionResult<MedicalRecordsDTO>> GetMedicalRecordsByID(int id)
             {
                 if (id < 1)
                 {
                     return BadRequest("bad Request");
                 }
 
-                MedicalRecords MedicalRecords = MedicalRecords.Find(id);
+                MedicalRecords MedicalRecords = await MedicalRecords.Find(id);
 
                 if (MedicalRecords == null)
                 {
@@ -53,46 +53,49 @@ namespace MedicalRecordsAPIServerSide.Controllers
             }
 
 
-
-            [HttpPost("Add", Name = "AddMedicalRecords")]
-            [ProducesResponseType(StatusCodes.Status201Created)]
+        [HttpPost("Add", Name = "AddMedicalRecords")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
             [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-            public ActionResult<MedicalRecordsDTO> AddNewMedicalRecords(MedicalRecordsDTO newMedicalRecordsDTO)
+        public async Task<ActionResult<int>> AddNewMedicalRecords(MedicalRecordsDTO newMedicalRecordsDTO)
+        {
+            if (newMedicalRecordsDTO == null)
             {
-                if (newMedicalRecordsDTO == null || string.IsNullOrEmpty(newMedicalRecordsDTO.VisitDescription)
-                   || string.IsNullOrEmpty(newMedicalRecordsDTO.Diagnosis)
-                   || string.IsNullOrEmpty(newMedicalRecordsDTO.AdditionalNotes))
-                {
-                    return BadRequest("Invalid MedicalRecords data");
-                }
-
-                MedicalRecords MedicalRecords = new PersonsAPIBusinessLayer.MedicalRecords.MedicalRecords(new MedicalRecordsDTO(newMedicalRecordsDTO.MedicalRecordID,
-                    newMedicalRecordsDTO.VisitDescription, newMedicalRecordsDTO.Diagnosis, newMedicalRecordsDTO.AdditionalNotes));
-
-                MedicalRecords.Save();
-                newMedicalRecordsDTO.MedicalRecordID = MedicalRecords.MedicalRecordID;
-                return CreatedAtRoute("GetMedicalRecordsByID", new { id = newMedicalRecordsDTO.MedicalRecordID }, newMedicalRecordsDTO);
-
-
+                return BadRequest("Invalid MedicalRecords data");
             }
 
+            // إنشاء نموذج MedicalRecords باستخدام بيانات المدخلات
+            var medicalRecord = new PersonsAPIBusinessLayer.MedicalRecords.MedicalRecords(new MedicalRecordsDTO(
+                0, // يمكن أن تكون قيمة جديدة، حيث يتم تعيين ID لاحقًا بعد الإضافة
+                newMedicalRecordsDTO.VisitDescription ?? null,
+                newMedicalRecordsDTO.Diagnosis ?? null,
+                newMedicalRecordsDTO.AdditionalNotes ?? null
+            ));
+
+            // حفظ السجل
+            await medicalRecord.SaveAsync();
+            var newMedicalRecordID = medicalRecord.SDTO.MedicalRecordID;
+
+                // تأكد من أن SaveAsync ترجع ID السجل الجديد
+            // إرجاع ID السجل الجديد كاستجابة
+            return CreatedAtRoute("GetMedicalRecordsByID", new { id = newMedicalRecordID }, newMedicalRecordID);
+        }
 
 
-            [HttpPut("Update/{id}", Name = "UpdateMedicalRecords")]
+
+        [HttpPut("Update/{id}", Name = "UpdateMedicalRecords")]
 
             [ProducesResponseType(StatusCodes.Status200OK)]
             [ProducesResponseType(StatusCodes.Status400BadRequest)]
             [ProducesResponseType(StatusCodes.Status404NotFound)]
             //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-            public ActionResult<MedicalRecordsDTO> UpdateMedicalRecords(int id, MedicalRecordsDTO UpdateMedicalRecordsDTO)
+            public async Task<ActionResult<MedicalRecordsDTO>> UpdateMedicalRecords(int id, MedicalRecordsDTO UpdateMedicalRecordsDTO)
             {
-                if (id < 1 || UpdateMedicalRecordsDTO == null || string.IsNullOrEmpty(UpdateMedicalRecordsDTO.VisitDescription) || string.IsNullOrEmpty(UpdateMedicalRecordsDTO.Diagnosis)
-                     || string.IsNullOrEmpty(UpdateMedicalRecordsDTO.AdditionalNotes))
+                if (id < 1 || UpdateMedicalRecordsDTO == null )
                 {
                     return BadRequest("Invalid MedicalRecords data");
                 }
-                MedicalRecords MedicalRecords = MedicalRecords.Find(id);
+                MedicalRecords MedicalRecords = await MedicalRecords.Find(id);
 
 
                 if (MedicalRecords == null)
@@ -105,7 +108,7 @@ namespace MedicalRecordsAPIServerSide.Controllers
                 MedicalRecords.Diagnosis = UpdateMedicalRecordsDTO.Diagnosis;
                 MedicalRecords.AdditionalNotes = UpdateMedicalRecordsDTO.AdditionalNotes;
 
-                if (MedicalRecords.Save())
+                if (await MedicalRecords.SaveAsync())
                 {
                     //return the DTO not the Full Object
                     return Ok(MedicalRecords.SDTO);
@@ -128,7 +131,7 @@ namespace MedicalRecordsAPIServerSide.Controllers
             [ProducesResponseType(StatusCodes.Status404NotFound)]
             [ProducesResponseType(StatusCodes.Status409Conflict)]
 
-            public ActionResult DeleteMedicalRecords(int id)
+            public async Task<ActionResult> DeleteMedicalRecords(int id)
             {
                 if (id < 1)
                 {
@@ -136,14 +139,14 @@ namespace MedicalRecordsAPIServerSide.Controllers
                 }
 
 
-                if (!MedicalRecords.IsMedicalRecordExists(id))
+                if (!(await MedicalRecords.IsMedicalRecordExists(id)))
                 {
                     return NotFound($"MedicalRecords with ID {id} not exist");
                 }
 
 
 
-                if (MedicalRecords.DeleteMedicalRecord(id))
+                if (await MedicalRecords.DeleteMedicalRecord(id))
                 {
                     return Ok($"MedicalRecords with ID {id} has been deleted");
                 }
